@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import snackscription.authentication.enums.UserType;
 
 class UserTest {
 
@@ -17,7 +18,7 @@ class UserTest {
         user.setName("John Doe");
         user.setEmail("john@example.com");
         user.setPassword("password");
-        user.setRole("USER");
+        user.setRole(UserType.USER.getValue());
     }
 
     @Test
@@ -37,7 +38,7 @@ class UserTest {
 
     @Test
     void testGetRole() {
-        assertEquals("USER", user.getRole());
+        assertEquals(UserType.USER.getValue(), user.getRole());
     }
 
     @Test
