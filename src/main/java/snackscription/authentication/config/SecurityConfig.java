@@ -22,11 +22,14 @@ import snackscription.authentication.service.UserDetailsServiceImpl;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private UserDetailsServiceImpl userDetailsService;
+    private final UserDetailsServiceImpl userDetailsService;
+    private final JWTAuthFilter jwtAuthFilter;
 
     @Autowired
-    private JWTAuthFilter jwtAuthFilter;
+    public SecurityConfig(UserDetailsServiceImpl userDetailsService, JWTAuthFilter jwtAuthFilter) {
+        this.userDetailsService = userDetailsService;
+        this.jwtAuthFilter = jwtAuthFilter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
