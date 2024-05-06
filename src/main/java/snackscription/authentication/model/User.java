@@ -35,7 +35,7 @@ public class User implements UserDetails {
     }
 
     public void setRole(String role) {
-        if (UserType.contains(role)) {
+        if (!UserType.contains(role)) {
             throw new IllegalArgumentException("Invalid user type");
         }
         this.role = role;
