@@ -5,7 +5,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import snackscription.authentication.model.User;
 import snackscription.authentication.repository.UserRepository;
+
+import java.util.Optional;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -14,6 +17,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+        Optional<User> userOptional = userRepository.findByEmail(username);
+        if (userOptional.isEmpty()) {
+            throw new UsernameNotFoundException("User not found with email: " + username);
+        }
+        return userOptional.get();
     }
 }
