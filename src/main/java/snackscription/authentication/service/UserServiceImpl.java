@@ -22,26 +22,23 @@ public class UserServiceImpl implements UserService {
 
     private final AuthenticationManager authenticationManager;
 
-    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, JWTUtils jwtUtils, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.jwtUtils = jwtUtils;
         this.authenticationManager = authenticationManager;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public UserDTO register(UserDTO registrationRequest){
         UserDTO response = new UserDTO();
-
         try {
             User user = new User();
             user.setEmail(registrationRequest.getEmail());
             user.setName(registrationRequest.getName());
             user.setRole(registrationRequest.getRole());
-            user.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
+            user.setPassword(registrationRequest.getPassword());
             User userResult = userRepository.save(user);
             response.setUser(userResult);
             response.setMessage("Register success!");
@@ -170,7 +167,7 @@ public class UserServiceImpl implements UserService {
                 existingUser.setRole(updatedUser.getRole());
 
                 if(updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()){
-                    existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+                    existingUser.setPassword(updatedUser.getPassword());
                 }
 
                 User savedUser = userRepository.save(existingUser);

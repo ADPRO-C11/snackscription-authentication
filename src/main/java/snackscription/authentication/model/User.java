@@ -5,6 +5,8 @@ import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import snackscription.authentication.enums.UserType;
 
 import java.util.Collection;
@@ -26,6 +28,7 @@ public class User implements UserDetails {
     private String role;
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}$");
+    private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public void setEmail(String email) {
         if (!EMAIL_PATTERN.matcher(email).matches()) {
@@ -45,7 +48,7 @@ public class User implements UserDetails {
         if (password.length() < 8) {
             throw new IllegalArgumentException("Password must be at least 8 characters long");
         }
-        this.password = password;
+        this.password = passwordEncoder.encode(password) ;
     }
 
     @Override
