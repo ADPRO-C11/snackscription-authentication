@@ -34,15 +34,20 @@ public class UserServiceImpl implements UserService {
     public UserDTO register(UserDTO registrationRequest){
         UserDTO response = new UserDTO();
         try {
-            User user = new User();
-            user.setEmail(registrationRequest.getEmail());
-            user.setName(registrationRequest.getName());
-            user.setRole(registrationRequest.getRole());
-            user.setPassword(registrationRequest.getPassword());
-            User userResult = userRepository.save(user);
-            response.setUser(userResult);
-            response.setMessage("Register success!");
-            response.setStatusCode(201);
+            if(userRepository.findByEmail(registrationRequest.getEmail()).isEmpty()){
+                User user = new User();
+                user.setEmail(registrationRequest.getEmail());
+                user.setName(registrationRequest.getName());
+                user.setRole(registrationRequest.getRole());
+                user.setPassword(registrationRequest.getPassword());
+                User userResult = userRepository.save(user);
+                response.setUser(userResult);
+                response.setMessage("Register success!");
+                response.setStatusCode(201);
+            } else{
+                response.setMessage("User with the email " + registrationRequest.getEmail() + " already exist!");
+                response.setStatusCode(500);
+            }
         } catch(Exception e){
             response.setStatusCode(500);
             response.setMessage(e.getMessage());
