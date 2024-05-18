@@ -10,6 +10,8 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    env:
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -38,7 +40,6 @@ jobs:
           sed -i 's|${JDBC_DATABASE_URL}|'"${{ secrets.JDBC_DATABASE_URL }}"'|g' src/main/resources/application-prod.properties
           sed -i 's|${JDBC_DATABASE_USERNAME}|'"${{ secrets.JDBC_DATABASE_USERNAME }}"'|g' src/main/resources/application-prod.properties
           sed -i 's|${JDBC_DATABASE_PASSWORD}|'"${{ secrets.JDBC_DATABASE_PASSWORD }}"'|g' src/main/resources/application-prod.properties
-          sed -i 's|${JWT_SECRET}|'"${{ secrets.JWT_SECRET }}"'|g' src/main/java/snackscription/authentication/utils/JWTUtils.java
 
       - name: Build with Gradle
         run: ./gradlew assemble
@@ -101,7 +102,6 @@ jobs:
               --build-arg JDBC_DATABASE_PASSWORD=${{ secrets.JDBC_DATABASE_PASSWORD }} \
               --build-arg JDBC_DATABASE_URL=${{ secrets.JDBC_DATABASE_URL }} \
               --build-arg JDBC_DATABASE_USERNAME=${{ secrets.JDBC_DATABASE_USERNAME }} \
-              --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} \
               -t ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }} \
               .  
           docker push ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }}
