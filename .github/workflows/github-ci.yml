@@ -101,6 +101,7 @@ jobs:
               --build-arg JDBC_DATABASE_PASSWORD=${{ secrets.JDBC_DATABASE_PASSWORD }} \
               --build-arg JDBC_DATABASE_URL=${{ secrets.JDBC_DATABASE_URL }} \
               --build-arg JDBC_DATABASE_USERNAME=${{ secrets.JDBC_DATABASE_USERNAME }} \
+              --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} \
               -t ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }} \
               .  
           docker push ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }}
