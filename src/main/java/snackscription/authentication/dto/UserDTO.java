@@ -2,12 +2,13 @@ package snackscription.authentication.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Data;
+import lombok.*;
 import snackscription.authentication.model.User;
 
 import java.util.List;
 
-@Data
+@NoArgsConstructor
+@Getter @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserDTO {
