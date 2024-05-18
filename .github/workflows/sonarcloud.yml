@@ -76,4 +76,5 @@ jobs:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/users
           SPRING_DATASOURCE_USERNAME: postgres
           SPRING_DATASOURCE_PASSWORD: password
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: chmod +x ./gradlew && ./gradlew build sonar --info
