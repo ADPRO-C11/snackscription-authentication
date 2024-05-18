@@ -8,6 +8,7 @@ class AuthenticationApplicationTests {
 
 	@Test
 	void contextLoads() {
+		AuthenticationApplication.main(new String[] {});
 	}
 
 }

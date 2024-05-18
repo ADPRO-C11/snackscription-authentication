@@ -46,7 +46,7 @@ class UserControllerTest {
 
         ResponseEntity<UserDTO> result = userController.register(userDTO);
 
-        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertEquals(response, result.getBody());
     }
 
@@ -126,6 +126,160 @@ class UserControllerTest {
         ResponseEntity<UserDTO> result = userController.deleteUser(userId);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(response, result.getBody());
+    }
+
+    @Test
+    void testRegisterInternalServerError() {
+        UserDTO request = new UserDTO();
+        UserDTO response = new UserDTO();
+        response.setStatusCode(500);
+
+        when(userService.register(any(UserDTO.class))).thenReturn(response);
+
+        ResponseEntity<UserDTO> result = userController.register(request);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        assertEquals(response, result.getBody());
+    }
+
+    @Test
+    void testLoginInternalServerError() {
+        UserDTO request = new UserDTO();
+        UserDTO response = new UserDTO();
+        response.setStatusCode(500);
+
+        when(userService.login(any(UserDTO.class))).thenReturn(response);
+
+        ResponseEntity<UserDTO> result = userController.login(request);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        assertEquals(response, result.getBody());
+    }
+
+    @Test
+    void testLoginNotFound() {
+        UserDTO request = new UserDTO();
+        UserDTO response = new UserDTO();
+        response.setStatusCode(404);
+
+        when(userService.login(any(UserDTO.class))).thenReturn(response);
+
+        ResponseEntity<UserDTO> result = userController.login(request);
+
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        assertEquals(response, result.getBody());
+    }
+
+    @Test
+    void testRefreshInternalServerError() {
+        UserDTO request = new UserDTO();
+        UserDTO response = new UserDTO();
+        response.setStatusCode(500);
+
+        when(userService.refreshToken(any(UserDTO.class))).thenReturn(response);
+
+        ResponseEntity<UserDTO> result = userController.refresh(request);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        assertEquals(response, result.getBody());
+    }
+
+    @Test
+    void testGetAllUserInternalServerError() {
+        UserDTO response = new UserDTO();
+        response.setStatusCode(500);
+
+        when(userService.getAllUser()).thenReturn(response);
+
+        ResponseEntity<UserDTO> result = userController.getAllUser();
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        assertEquals(response, result.getBody());
+    }
+
+    @Test
+    void testGetAllUserNotFound() {
+        UserDTO response = new UserDTO();
+        response.setStatusCode(404);
+
+        when(userService.getAllUser()).thenReturn(response);
+
+        ResponseEntity<UserDTO> result = userController.getAllUser();
+
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        assertEquals(response, result.getBody());
+    }
+
+    @Test
+    void testGetUserByIdInternalServerError() {
+        String userId = "someUserId";
+        UserDTO response = new UserDTO();
+        response.setStatusCode(500);
+
+        when(userService.getUserById(userId)).thenReturn(response);
+
+        ResponseEntity<UserDTO> result = userController.getUserById(userId);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        assertEquals(response, result.getBody());
+    }
+
+    @Test
+    void testUpdateUserInternalServerError() {
+        String userId = "someUserId";
+        UserDTO request = new UserDTO();
+        UserDTO response = new UserDTO();
+        response.setStatusCode(500);
+
+        when(userService.updateUser(userId, request)).thenReturn(response);
+
+        ResponseEntity<UserDTO> result = userController.updateUser(userId, request);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        assertEquals(response, result.getBody());
+    }
+
+    @Test
+    void testUpdateUserNotFound() {
+        String userId = "someUserId";
+        UserDTO request = new UserDTO();
+        UserDTO response = new UserDTO();
+        response.setStatusCode(404);
+
+        when(userService.updateUser(userId, request)).thenReturn(response);
+
+        ResponseEntity<UserDTO> result = userController.updateUser(userId, request);
+
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        assertEquals(response, result.getBody());
+    }
+
+    @Test
+    void testDeleteUserInternalServerError() {
+        String userId = "someUserId";
+        UserDTO response = new UserDTO();
+        response.setStatusCode(500);
+
+        when(userService.deleteUser(userId)).thenReturn(response);
+
+        ResponseEntity<UserDTO> result = userController.deleteUser(userId);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        assertEquals(response, result.getBody());
+    }
+
+    @Test
+    void testDeleteUserNotFound() {
+        String userId = "someUserId";
+        UserDTO response = new UserDTO();
+        response.setStatusCode(404);
+
+        when(userService.deleteUser(userId)).thenReturn(response);
+
+        ResponseEntity<UserDTO> result = userController.deleteUser(userId);
+
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
         assertEquals(response, result.getBody());
     }
 }

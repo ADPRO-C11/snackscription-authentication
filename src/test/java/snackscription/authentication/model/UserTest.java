@@ -1,15 +1,17 @@
 package snackscription.authentication.model;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import snackscription.authentication.enums.UserType;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class UserTest {
 
     private User user;
+    private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @BeforeEach
     void setUp() {
@@ -33,7 +35,7 @@ class UserTest {
 
     @Test
     void testGetPassword() {
-        assertEquals("password", user.getPassword());
+        assertTrue(passwordEncoder.matches("password", user.getPassword()));
     }
 
     @Test

@@ -235,7 +235,7 @@ class UserServicesImplTest {
     }
 
     @Test
-    void testDeleteUser_Successful() {
+    void testDeleteUser() {
         User user = new User();
         user.setId("1");
         user.setEmail("test@example.com");
@@ -256,7 +256,7 @@ class UserServicesImplTest {
     }
 
     @Test
-    void testDeleteUser_UserNotFound() {
+    void testDeleteUserNotFound() {
         when(userRepository.findById("1")).thenReturn(Optional.empty());
 
         UserDTO response = userService.deleteUser("1");
@@ -269,7 +269,7 @@ class UserServicesImplTest {
     }
 
     @Test
-    void testUpdateUser_Successful() {
+    void testUpdateUser() {
         User existingUser = new User();
         existingUser.setId("1");
         existingUser.setEmail("test@example.com");
@@ -300,7 +300,7 @@ class UserServicesImplTest {
     }
 
     @Test
-    void testUpdateUser_UserNotFound() {
+    void testUpdateUserNotFound() {
         when(userRepository.findById("1")).thenReturn(Optional.empty());
 
         UserDTO updatedUserData = new UserDTO();
@@ -318,4 +318,95 @@ class UserServicesImplTest {
         verify(userRepository, never()).save(any(User.class));
     }
 
+    @Test
+    void testRegisterUserAlreadyExists() {
+        UserDTO registrationRequest = new UserDTO();
+        registrationRequest.setEmail("test@example.com");
+        registrationRequest.setName("Test User");
+        registrationRequest.setPassword("password");
+        registrationRequest.setRole("USER");
+
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(new User()));
+
+        UserDTO response = userService.register(registrationRequest);
+
+        assertEquals(500, response.getStatusCode());
+        assertNull(response.getUser());
+        assertEquals("User with the email test@example.com already exist!", response.getMessage());
+    }
+
+    @Test
+    void testRefreshTokenFailure() {
+        UserDTO refreshTokenRequest = new UserDTO();
+        refreshTokenRequest.setToken("invalidToken");
+
+        when(jwtUtils.extractUsername(anyString())).thenThrow(new RuntimeException("Invalid token"));
+
+        UserDTO response = userService.refreshToken(refreshTokenRequest);
+
+        assertEquals(500, response.getStatusCode());
+        assertNull(response.getToken());
+        assertNull(response.getRefreshToken());
+        assertNull(response.getExpirationTime());
+        assertEquals("Invalid token", response.getMessage());
+    }
+
+    @Test
+    void testGetAllUserNotFound() {
+        when(userRepository.findAll()).thenReturn(List.of());
+
+        UserDTO response = userService.getAllUser();
+
+        assertEquals(404, response.getStatusCode());
+        assertNull(response.getUserList());
+        assertEquals("No users found!", response.getMessage());
+    }
+
+    @Test
+    void testGetAllUserException() {
+        when(userRepository.findAll()).thenThrow(new RuntimeException("Database error"));
+
+        UserDTO response = userService.getAllUser();
+
+        assertEquals(500, response.getStatusCode());
+        assertNull(response.getUserList());
+        assertEquals("Database error", response.getMessage());
+    }
+
+    @Test
+    void testGetUserByIdException() {
+        when(userRepository.findById("1")).thenThrow(new RuntimeException("Database error"));
+
+        UserDTO response = userService.getUserById("1");
+
+        assertEquals(500, response.getStatusCode());
+        assertNull(response.getUser());
+        assertEquals("Database error", response.getMessage());
+    }
+
+    @Test
+    void testDeleteUserException() {
+        when(userRepository.findById("1")).thenThrow(new RuntimeException("Database error"));
+
+        UserDTO response = userService.deleteUser("1");
+
+        assertEquals(500, response.getStatusCode());
+        assertEquals("Database error", response.getMessage());
+    }
+
+    @Test
+    void testUpdateUserException() {
+        UserDTO updatedUserData = new UserDTO();
+        updatedUserData.setEmail("updated@example.com");
+        updatedUserData.setName("Updated User");
+        updatedUserData.setRole("ADMIN");
+        updatedUserData.setPassword("newHashedPassword");
+
+        when(userRepository.findById("1")).thenThrow(new RuntimeException("Database error"));
+
+        UserDTO response = userService.updateUser("1", updatedUserData);
+
+        assertEquals(500, response.getStatusCode());
+        assertEquals("Database error", response.getMessage());
+    }
 }
