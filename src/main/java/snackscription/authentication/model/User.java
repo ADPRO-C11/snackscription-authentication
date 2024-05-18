@@ -2,6 +2,8 @@ package snackscription.authentication.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,7 +17,7 @@ import java.util.regex.Pattern;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter @Setter
 public class User implements UserDetails {
 
     @Id
