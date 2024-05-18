@@ -2,6 +2,7 @@ package snackscription.authentication.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -18,12 +19,8 @@ public class JWTUtils {
     private final SecretKey KEY;
     private static final Long EXPIRATION_TIME = 86400000L; //24 Hours
 
-    public JWTUtils() {
-        String secret = System.getenv("JWT_SECRET");
-        if (secret == null || secret.isEmpty()) {
-            throw new IllegalStateException("JWT_SECRET environment variable is not set");
-        }
-        byte[] keyBytes = Base64.getDecoder().decode(secret.getBytes(StandardCharsets.UTF_8));
+    public JWTUtils(@Value("${JWT_SECRET}") String jwtSecret) {
+        byte[] keyBytes = Base64.getDecoder().decode(jwtSecret.getBytes(StandardCharsets.UTF_8));
         this.KEY = new SecretKeySpec(keyBytes, "HmacSHA256");
     }
 
