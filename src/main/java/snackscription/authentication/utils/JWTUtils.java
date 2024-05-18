@@ -19,7 +19,10 @@ public class JWTUtils {
     private static final Long EXPIRATION_TIME = 86400000L; //24 Hours
 
     public JWTUtils() {
-        String secret = "8Zz5tw0Ionm3XPZZfN0NOml3z9FMfmpgXwovR9fp6ryDIoGRM8EPHAB6iHsc0fb";
+        String secret = System.getenv("JWT_SECRET");
+        if (secret == null || secret.isEmpty()) {
+            throw new IllegalStateException("JWT_SECRET environment variable is not set");
+        }
         byte[] keyBytes = Base64.getDecoder().decode(secret.getBytes(StandardCharsets.UTF_8));
         this.KEY = new SecretKeySpec(keyBytes, "HmacSHA256");
     }
