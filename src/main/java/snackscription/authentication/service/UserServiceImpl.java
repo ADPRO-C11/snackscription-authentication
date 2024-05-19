@@ -189,4 +189,24 @@ public class UserServiceImpl implements UserService {
         }
         return response;
     }
+
+    @Override
+    public UserDTO getMyInfo(String email){
+        UserDTO response = new UserDTO();
+        try{
+            Optional<User> user = userRepository.findByEmail(email);
+            if(user.isPresent()) {
+                response.setUser(user.get());
+                response.setStatusCode(200);
+                response.setMessage("Success");
+            } else {
+                response.setStatusCode(404);
+                response.setMessage("User not found for update");
+            }
+        } catch (Exception e){
+            response.setStatusCode(500);
+            response.setMessage("Error occurred while getting user info: " + e.getMessage());
+        }
+        return response;
+    }
 }

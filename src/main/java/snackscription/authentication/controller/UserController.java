@@ -2,8 +2,11 @@ package snackscription.authentication.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import snackscription.authentication.dto.UserDTO;
+import snackscription.authentication.model.User;
 import snackscription.authentication.service.UserService;
 
 @RestController
@@ -40,6 +43,19 @@ public class UserController {
     public ResponseEntity<UserDTO> refresh(@RequestBody UserDTO request){
         var response = userService.refreshToken(request);
         if(response.getStatusCode() == 500){
+            return ResponseEntity.internalServerError().body(response);
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/useradmin/get-profile")
+    public  ResponseEntity<UserDTO> getMyProfile(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        var response = userService.getMyInfo(email);
+        if(response.getStatusCode() == 404) {
+            return ResponseEntity.status(404).body(response);
+        } else if(response.getStatusCode() == 500){
             return ResponseEntity.internalServerError().body(response);
         }
         return ResponseEntity.ok(response);

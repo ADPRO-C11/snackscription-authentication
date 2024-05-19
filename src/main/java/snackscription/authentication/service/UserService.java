@@ -10,4 +10,5 @@ public interface UserService {
     UserDTO getUserById(String id);
     UserDTO deleteUser(String id);
     UserDTO updateUser(String id, UserDTO updatedUser);
+    UserDTO getMyInfo(String email);
 }
