@@ -409,4 +409,51 @@ class UserServicesImplTest {
         assertEquals(500, response.getStatusCode());
         assertEquals("Database error", response.getMessage());
     }
+
+    @Test
+    void testGetMyInfoSuccess() {
+        String userEmail = "test@example.com";
+        User user = new User();
+        user.setId("1");
+        user.setEmail(userEmail);
+        user.setName("Test User");
+        user.setRole("USER");
+        user.setPassword("hashedPassword");
+
+        when(userRepository.findByEmail(userEmail)).thenReturn(Optional.of(user));
+
+        UserDTO response = userService.getMyInfo(userEmail);
+
+        assertEquals(200, response.getStatusCode());
+        assertEquals("Success", response.getMessage());
+        assertNotNull(response.getUser());
+        assertEquals("1", response.getUser().getId());
+        assertEquals(userEmail, response.getUser().getEmail());
+    }
+
+    @Test
+    void testGetMyInfoUserNotFound() {
+        String userEmail = "nonexistent@example.com";
+
+        when(userRepository.findByEmail(userEmail)).thenReturn(Optional.empty());
+
+        UserDTO response = userService.getMyInfo(userEmail);
+
+        assertEquals(404, response.getStatusCode());
+        assertEquals("User not found for update", response.getMessage());
+        assertNull(response.getUser());
+    }
+
+    @Test
+    void testGetMyInfoException() {
+        String userEmail = "test@example.com";
+
+        when(userRepository.findByEmail(userEmail)).thenThrow(new RuntimeException("Database error"));
+
+        UserDTO response = userService.getMyInfo(userEmail);
+
+        assertEquals(500, response.getStatusCode());
+        assertEquals("Error occurred while getting user info: Database error", response.getMessage());
+        assertNull(response.getUser());
+    }
 }

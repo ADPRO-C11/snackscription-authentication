@@ -7,6 +7,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import snackscription.authentication.dto.UserDTO;
 import snackscription.authentication.enums.UserType;
 import snackscription.authentication.model.User;
@@ -17,6 +19,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,6 +30,9 @@ class UserControllerTest {
 
     @InjectMocks
     private UserController userController;
+
+    @Mock
+    private Authentication authentication;
 
     @Test
     void testRegister() {
@@ -280,6 +286,53 @@ class UserControllerTest {
         ResponseEntity<UserDTO> result = userController.deleteUser(userId);
 
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        assertEquals(response, result.getBody());
+    }
+
+    @Test
+    void testGetMyProfileSuccess() {
+        String userEmail = "test@example.com";
+        UserDTO response = new UserDTO();
+        when(userService.getMyInfo(userEmail)).thenReturn(response);
+
+        when(authentication.getName()).thenReturn(userEmail);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        ResponseEntity<UserDTO> result = userController.getMyProfile();
+
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(response, result.getBody());
+    }
+
+    @Test
+    void testGetMyProfileUserNotFound() {
+        String userEmail = "test@example.com";
+        UserDTO response = new UserDTO();
+        response.setStatusCode(404);
+        when(userService.getMyInfo(userEmail)).thenReturn(response);
+
+        when(authentication.getName()).thenReturn(userEmail);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        ResponseEntity<UserDTO> result = userController.getMyProfile();
+
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        assertEquals(response, result.getBody());
+    }
+
+    @Test
+    void testGetMyProfileInternalServerError() {
+        String userEmail = "test@example.com";
+        UserDTO response = new UserDTO();
+        response.setStatusCode(500);
+        when(userService.getMyInfo(userEmail)).thenReturn(response);
+
+        when(authentication.getName()).thenReturn(userEmail);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        ResponseEntity<UserDTO> result = userController.getMyProfile();
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
         assertEquals(response, result.getBody());
     }
 }
