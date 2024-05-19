@@ -6,19 +6,22 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class JWTUtilsTest {
 
+    private final String JWT_SECRET = "rMfD5uHwAq6zZb8yP3sQ9vC1xG5jKp2sR5vU8yBwEe2bMfXj"; // Randomly generated JWT secret key
+
+    private final JWTUtils jwtUtils = new JWTUtils(JWT_SECRET);
+
     @Mock
     private UserDetails userDetails;
-
-    @InjectMocks
-    private JWTUtils jwtUtils;
 
     @Test
     void testGenerateToken() {
@@ -46,6 +49,7 @@ class JWTUtilsTest {
         when(userDetails.getUsername()).thenReturn("testUser");
         String token = jwtUtils.generateToken(userDetails);
         assertTrue(jwtUtils.isTokenValid(token, userDetails));
+
         when(userDetails.getUsername()).thenReturn("anotherUser");
         assertFalse(jwtUtils.isTokenValid(token, userDetails));
     }
