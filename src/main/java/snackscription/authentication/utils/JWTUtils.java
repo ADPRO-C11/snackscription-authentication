@@ -25,7 +25,11 @@ public class JWTUtils {
     }
 
     public String generateToken(UserDetails userDetails){
+        String role = userDetails.getAuthorities().iterator().next().getAuthority();  // Assuming only one role per user
+        Map<String, Object> claims = Map.of("role", role);
+
         return Jwts.builder()
+                .claims(claims)
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
@@ -34,6 +38,9 @@ public class JWTUtils {
     }
 
     public String generateRefreshToken(Map<String, Object> claims, UserDetails userDetails){
+        String role = userDetails.getAuthorities().iterator().next().getAuthority();  // Assuming only one role per user
+        claims.put("role", role);
+
         return Jwts.builder()
                 .claims(claims)
                 .subject(userDetails.getUsername())
